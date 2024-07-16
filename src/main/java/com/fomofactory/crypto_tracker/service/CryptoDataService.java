@@ -3,6 +3,7 @@ package com.fomofactory.crypto_tracker.service;
 import com.fomofactory.crypto_tracker.model.db.CryptoData;
 import com.fomofactory.crypto_tracker.model.response.CryptoAPIResponse;
 import com.fomofactory.crypto_tracker.repository.CryptoDataRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CryptoDataService {
 
     private static final List<String> CRYPTO_CODES = List.of("BTC", "ETH", "BNB", "AVAX", "ICP");
@@ -32,6 +34,7 @@ public class CryptoDataService {
 
     @Scheduled(fixedRate = 5000)
     public void pollStockData() {
+        log.info("Fetching real-time data from livecoinwatch API");
         fetchDataFromApi();
     }
 
@@ -56,13 +59,13 @@ public class CryptoDataService {
                             .timestamp(LocalDateTime.now())
                             .allTimeHighPrice(cryptoResponse.getBody().getAllTimeHighUSD()).build();
                     cryptoDataRepository.save(cryptoData);
-//                }
 
             }
         }
     }
 
     public List<CryptoData> getRecentCryptoData(String code) {
+        log.info("Fetching recent 20 real-time data for crypto {} from database", code);
         return cryptoDataRepository.findTop20ByCodeOrderByTimestampDesc(code);
     }
 

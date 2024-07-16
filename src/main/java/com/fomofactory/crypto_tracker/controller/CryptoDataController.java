@@ -24,6 +24,7 @@ public class CryptoDataController {
 
     @GetMapping("/real-time/{code}")
     public List<CryptoData> getCryptoRealTimeData(@PathVariable String code) {
+        log.info("Getting real-time data for crypto {}", code);
         return cryptoDataService.getRecentCryptoData(code);
     }
 
